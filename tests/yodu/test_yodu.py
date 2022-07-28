@@ -34,5 +34,5 @@ def test_yodu():
     recommender = RecommenderEngine(recommender_id, config)
     recommender.add_items(test_items)
     recommender.add_users(test_users)
-    recommender.add_actions(test_actions)
-    recommender.get_recommendations(user_id, algo_spec, limit, offset)
+    # recommender.add_actions(test_actions)
+    # recommender.get_recommendations(user_id, algo_spec, limit, offset)

@@ -7,6 +7,7 @@ ExampleUseCase:
 - Video Portals
 - News Aggregator Websites
 
+If you want to contribute just send me an email at shashank[at]thegeeklabs.com. Happy to share DB and other access.
 
 # TODO list
 - Add APIs for add_action
