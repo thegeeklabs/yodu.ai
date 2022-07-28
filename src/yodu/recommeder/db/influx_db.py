@@ -7,14 +7,17 @@ class InfluxDb:
     client = None
     bucket = "bridgeml"
 
+    def __init__(self, bucket="bridgeml"):
+        self.bucket = bucket
+
     def get_client(self):
         if not self.client:
-            self.client = InfluxDBClient(url=settings.YODU_INFLUX_DB_HOST,
+            self.client = InfluxDBClient(url=settings.INFLUX_DB_HOST,
                                          port=8086,
-                                         username=settings.YODU_INFLUX_DB_USER,
-                                         password=settings.YODU_INFLUX_DB_PASSWORD,
-                                         ssl=settings.YODU_INFLUX_USE_SSL,
-                                         verify_ssl=settings.YODU_INFLUX_USE_VERIFY_SSL)
+                                         username=settings.INFLUX_DB_USER,
+                                         password=settings.INFLUX_DB_PASSWORD,
+                                         ssl=settings.INFLUX_USE_SSL,
+                                         verify_ssl=settings.INFLUX_USE_VERIFY_SSL)
         return self.client
 
     def get_query_api(self):

@@ -36,13 +36,6 @@ algo_spec = {
 }
 
 
-def test_sql_query():
-    client = InfluxDb().get_query_api()
-    query = 'SELECT * from "bridgeml"'
-    res = client.query(org=org, query=query)
-    print(res)
-
-
 def test_influx_db_client():
     days_ago = 1
     action_type = "LIKE"
@@ -68,3 +61,4 @@ def test_top_item_by_action_by_user():
     user_id = "1"
     items = engine.get_recommendations(user_id=user_id)
     assert items is not None
+

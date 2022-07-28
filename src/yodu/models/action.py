@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class Action(BaseModel):
-    id_: UUID = Field(default_factory=uuid4)
+    id_: str = Field(default_factory=uuid4)
     item_id: str
     user_id: str
     type: str
