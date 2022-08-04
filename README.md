@@ -1,5 +1,7 @@
 # Yodu.ai
 
+[![PyPI version](https://badge.fury.io/py/yodu.svg)](https://badge.fury.io/py/yodu)
+
 A generic purpose Recommender System that can be configured for any UseCase.
 ExampleUseCase:
 
