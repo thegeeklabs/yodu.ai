@@ -7,7 +7,7 @@
 
 
 The yodu.ai project has a
-[Code of Conduct]()
+[Code of Conduct](https://github.com/thegeeklabs/yodu.ai/blob/dev/CODE_OF_CONDUCT.md)
 to which all contributors must adhere.
 
 <a id="developers-certificate-of-origin"></a>
