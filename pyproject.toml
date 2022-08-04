@@ -1,10 +1,17 @@
-[build-system]
-requires = [
-    "setuptools>=52",
-    "wheel>=0.36",
-]
-dependencies = [
-    "setuptools>=52",
-    "wheel>=0.36",
-]
-build-backend = "setuptools.build_meta"
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | __pycache__
+  | build
+  | dist
+  | conf.py
+)/
+'''
