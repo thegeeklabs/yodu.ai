@@ -1,0 +1,9 @@
+pydantic
+typing
+requests
+pytest
+elasticsearch
+influxdb-client
+python-dotenv
+pytest
+ijson==3.1.4
