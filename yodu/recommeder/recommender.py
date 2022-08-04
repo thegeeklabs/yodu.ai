@@ -46,17 +46,19 @@ class RecommenderEngine:
         pass
 
     def get_recommendations(self, user_id):
-        '''
+        """
         Algo:
         Add all providers to threads.
         Wait for x seconds
         return results
-        '''
+        """
         for name, provider in self.__providers.items():
             args = self.__algo_spec[name]["config"]
             args["user_id"] = user_id
-            worker = Thread(target=lambda q, config: q.put(provider.get_items(config=config)),
-                            args=(que, args))
+            worker = Thread(
+                target=lambda q, config: q.put(provider.get_items(config=config)),
+                args=(que, args),
+            )
             worker.start()
             threads_list.append(worker)
 

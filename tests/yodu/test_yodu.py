@@ -8,24 +8,22 @@ test_items = [
         "created_at": "some_date",
         "updated_at": "some_date",
         "tags": ["technology", "ai", "ml"],
-        "description": "This is a test item"
+        "description": "This is a test item",
     }
 ]
 
-test_action = [{
-    "action_id": "1",
-    "item_id": "1",
-    "user_id": "1",
-    "action_type": "LIKE",
-    "created_at": "some_date",
-    "updated_at": "some_date"
-}]
+test_action = [
+    {
+        "action_id": "1",
+        "item_id": "1",
+        "user_id": "1",
+        "action_type": "LIKE",
+        "created_at": "some_date",
+        "updated_at": "some_date",
+    }
+]
 
-test_users = {
-    "user_id": "1",
-    "created_at": "some_date",
-    "updated_at": "some_date"
-}
+test_users = {"user_id": "1", "created_at": "some_date", "updated_at": "some_date"}
 
 
 def test_yodu():

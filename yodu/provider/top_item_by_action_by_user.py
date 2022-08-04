@@ -22,13 +22,13 @@ class TopItemsByUserAction(ProviderBase):
             self.next_token = kwargs["next_token"]
 
     def get_items(self, config):
-        '''
+        """
         - Get action sorted by "tag" type
         - Get items wich same "tag" type
         :param action_type:
         :param user_id:
         :return:
-        '''
+        """
         self.init(config)
 
         print(self.action_type)

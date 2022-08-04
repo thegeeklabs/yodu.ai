@@ -6,7 +6,7 @@ ExampleUseCase:
 - Social Platforms
 - Ecommerce Websites
 - Video Portals
-- News Aggregator Websites
+- News Aggregator Websitesx
 
 If you want to contribute just email me at shashank[at]yodu.ai . Happy to share DB and other access.
 

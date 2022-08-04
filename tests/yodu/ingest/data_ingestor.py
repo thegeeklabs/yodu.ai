@@ -39,23 +39,23 @@ def create_sample_actions():
         rand3 = random.randint(0, 10)
         rand4 = random.randint(0, 10)
         rand = random.randint(0, 100)
-        action = Action(item_id=rand,
-                        user_id=rand_user,
-                        type="READ",
-                        value=rand2,
-                        tags={
-                            "source": "test" + str(rand3),
-                            "category": "test" + str(rand4)
-                        }
-                        )
+        action = Action(
+            item_id=rand,
+            user_id=rand_user,
+            type="READ",
+            value=rand2,
+            tags={"source": "test" + str(rand3), "category": "test" + str(rand4)},
+        )
         actions.append(action)
     return actions
 
 
 def action_to_point(action: Action):
-    point = Point(action.type) \
-        .field(action.type, action.value) \
+    point = (
+        Point(action.type)
+        .field(action.type, action.value)
         .time(action.created_at, WritePrecision.MS)
+    )
     point.tag("user_id", action.user_id)
     point.tag("item_id", action.item_id)
     for key, value in action.tags.items():
@@ -66,9 +66,9 @@ def action_to_point(action: Action):
 def write_points(points):
     client = InfluxDb(bucket="lens").get_client()
     try:
-        client.write_api(write_options=ASYNCHRONOUS).write(bucket="lens",
-                                                           org=settings.INFLUX_DB_ORG,
-                                                           record=points)
+        client.write_api(write_options=ASYNCHRONOUS).write(
+            bucket="lens", org=settings.INFLUX_DB_ORG, record=points
+        )
     except InfluxDBError as e:
         print(e)
         if e.response.status == 401:
@@ -81,9 +81,11 @@ def ingest_items(actions):
     rand_days = random.randint(0, 48)
     write_time = datetime.datetime.utcnow() - datetime.timedelta(hours=rand_days)
     for action in actions:
-        point = Point(action.type) \
-            .field(action.type, action.value) \
+        point = (
+            Point(action.type)
+            .field(action.type, action.value)
             .time(write_time, WritePrecision.MS)
+        )
         point.tag("user_id", action.user_id)
         point.tag("item_id", action.item_id)
         for key, value in action.tags.items():
@@ -103,7 +105,9 @@ def read_lens_data():
     skipped = 0
     batches = {}
     total_time = 0
-    with open("/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb") as f:
+    with open(
+        "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb"
+    ) as f:
         for record in ijson.items(f, "item"):
             message = record["Message"]["data"]
             type = record["Message"]["type"]
@@ -112,18 +116,27 @@ def read_lens_data():
                 pub_id = message["pubId"]
 
                 tags = {}
-                if "timestamp" in message and '$numberLong' in message["timestamp"]:
-                    t = int(message["timestamp"]['$numberLong']) / 1000
+                if "timestamp" in message and "$numberLong" in message["timestamp"]:
+                    t = int(message["timestamp"]["$numberLong"]) / 1000
                     time_stamp = datetime.fromtimestamp(t).isoformat()
                 else:
                     t = record["Timestamp"]
-                    time_stamp = datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+                    time_stamp = datetime.strptime(
+                        t, "%Y-%m-%dT%H:%M:%S.%fZ"
+                    ).isoformat()
                 for key, value in message.items():
                     if key != "timestamp":
                         tags[key] = value
                 id = record["_id"]["$oid"]
-                action = Action(id_=id, item_id=pub_id, user_id=profile_id, tags=tags, value=1, type=type,
-                                created_at=time_stamp)
+                action = Action(
+                    id_=id,
+                    item_id=pub_id,
+                    user_id=profile_id,
+                    tags=tags,
+                    value=1,
+                    type=type,
+                    created_at=time_stamp,
+                )
                 point = action_to_point(action)
                 current_index = i % thread_count
                 if current_index not in batches:
