@@ -1,4 +1,4 @@
-from yodu.recommeder.recommender import RecommenderEngine
+from yodu.recommeder import RecommenderEngine
 
 test_items = [
     {

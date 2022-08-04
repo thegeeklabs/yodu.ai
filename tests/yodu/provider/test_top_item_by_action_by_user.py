@@ -1,8 +1,6 @@
-from influxdb_client.client.flux_table import FluxRecord
-
 from yodu.provider.top_item_by_action_by_user import TopItemsByUserAction
 from yodu.recommeder.db.influx_db import InfluxDb
-from yodu.recommeder.recommender import RecommenderEngine
+from yodu.recommeder import RecommenderEngine
 
 org = "influxdata"
 algo_spec = {

@@ -1,7 +1,5 @@
-import time
-
-from yodu.provider.provider_base import ProviderBase
-from yodu.recommeder.recommender import RecommenderEngine
+from yodu.provider import ProviderBase
+from yodu.recommeder import RecommenderEngine
 
 
 def test_recommender():

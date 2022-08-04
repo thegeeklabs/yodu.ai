@@ -31,7 +31,7 @@ If you want to contribute just email me at shashank[at]yodu.ai . Happy to share 
 ### Interacting with Yodu Recommendation Engine
 
 ```python
-from yodu.example import load_test_items, load_test_actions
+from yodu import load_test_items, load_test_actions
 
 import yodu
 
@@ -57,42 +57,42 @@ recommender.add_provider(name="CUSTOM_PROVIDER",
 recommender.enable_provider(name="CUSTOM_PROVIDER")
 
 algo_spec = {
-    "TOP_BY_PREVIOUS_LIKED_SOURCES": {
-        "provider": "TopItemsByUserAction",
-        "duration": "24h",
-        "config": {
-            "action_type": "LIKE",
-            "tag": "source"
-        },
-        "weight": 1
+  "TOP_BY_PREVIOUS_LIKED_SOURCES": {
+    "provider": "TopItemsByUserAction",
+    "duration": "24h",
+    "config": {
+      "action_type": "LIKE",
+      "tag": "source"
     },
-    "TOP_BY_PREVIOUS_LIKED_CATEGORIES": {
-        "provider": "TopItemsByUserAction",
-        "duration": "30h",
-        "config": {
-            "action_type": "LIKE",
-            "tag": "category"
-        },
-        "weight": 1
+    "weight": 1
+  },
+  "TOP_BY_PREVIOUS_LIKED_CATEGORIES": {
+    "provider": "TopItemsByUserAction",
+    "duration": "30h",
+    "config": {
+      "action_type": "LIKE",
+      "tag": "category"
     },
-    "TOP_BY_PREVIOUS_READ_CATEGORIES": {
-        "provider": "TopItemsByUserAction",
-        "duration": "30h",
-        "config": {
-            "action_type": "READ",
-            "tag": "category"
-        },
-        "weight": 1
+    "weight": 1
+  },
+  "TOP_BY_PREVIOUS_READ_CATEGORIES": {
+    "provider": "TopItemsByUserAction",
+    "duration": "30h",
+    "config": {
+      "action_type": "READ",
+      "tag": "category"
     },
-    "TOP_BY_PREVIOUS_READ_CATEGORIES": {
-        "provider": "CUSTOM_PROVIDER",
-        "duration": "30h",
-        "config": {
-            "action_type": "READ",
-            "tag": "category"
-        },
-        "weight": 1
-    }
+    "weight": 1
+  },
+  "TOP_BY_PREVIOUS_READ_CATEGORIES": {
+    "provider": "CUSTOM_PROVIDER",
+    "duration": "30h",
+    "config": {
+      "action_type": "READ",
+      "tag": "category"
+    },
+    "weight": 1
+  }
 }
 recommender.add_algo_spec(name="first_algo_spec", config=algo_spec)
 
