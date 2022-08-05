@@ -1,5 +1,5 @@
-from yodu.provider.top_item_by_action_by_user import TopItemsByUserAction
-from yodu.recommeder.db.influx_db import InfluxDb
+from yodu.db.es.es_client import ESClient
+from provider.providers.top_item_by_user_action.provider import TopItemsByUserAction
 from yodu.recommeder import RecommenderEngine
 
 org = "influxdata"
@@ -25,17 +25,6 @@ algo_spec = {
 }
 
 
-def test_influx_db_client():
-    days_ago = 1
-    action_type = "LIKE"
-    tag = "source"
-    limit = 5
-    res = InfluxDb().top_by_action(days_ago, action_type, tag, limit)
-    # This returns top categories liked by user
-    # return top items in these categories by LIKE that are not already liked by user
-    print(res)
-
-
 def test_top_item_by_action_by_user():
     engine = RecommenderEngine(recommender_id=None, algo_spec=algo_spec)
     """
@@ -50,3 +39,12 @@ def test_top_item_by_action_by_user():
     user_id = "1"
     items = engine.get_recommendations(user_id=user_id)
     assert items is not None
+
+
+def test_top_items_by():
+    provider = TopItemsByUserAction()
+    query = provider.top_by_action(days_ago=7, action_type="INDEXER_COMMENT_CREATED", tag="pubId", limit=10)
+    es_client = ESClient().get_client()
+    hits = es_client.search(index="lens", size=0, **query)
+    res = hits.body["aggregations"]['top_tag_by_action']['buckets']
+    print(res)

@@ -1,0 +1,6 @@
+type TopItemsByUserAction:
+    action_type: str
+    tag: str
+    user_id: str
+    next_token: str
+

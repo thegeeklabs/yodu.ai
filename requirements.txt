@@ -6,4 +6,3 @@ elasticsearch>=8.3.3
 influxdb-client>=1.31.0
 python-dotenv>=0.20.0
 ijson==3.1.4
-ijson==3.1.4

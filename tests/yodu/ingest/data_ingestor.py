@@ -6,28 +6,32 @@ import time
 from datetime import datetime
 
 import ijson
+from elasticsearch import helpers
 from influxdb_client import Point, WritePrecision
 from influxdb_client.client.exceptions import InfluxDBError
 from influxdb_client.client.write_api import ASYNCHRONOUS
 
 from yodu import settings
+from yodu.db.es.es_client import ESClient
 from yodu.models.action import Action
 from yodu.recommeder.db.influx_db import InfluxDb
 
 logger = logging.getLogger(__name__)
+
+steemit_blockchain_path = "/Users/shashank/PycharmProjects/yodu/data/steem.blockchain.json"
 
 
 class Indexer:
     __es_client = None
     __influxdb_client = None
 
-    def add_items(self, items):
+    def add_items(self, items: list):
         return self.__es_client.add_records(items)
 
     def add_users(self, users):
         return self.__es_client.add_records(users)
 
-    def add_actions(self, actions):
+    def add_actions(self, actions:list):
         return self.__es_client.add_actions(actions)
 
 
@@ -77,6 +81,21 @@ def write_points(points):
     client.close()
 
 
+es_client = ESClient().get_client()
+
+
+def add_items_to_es(docs):
+    def doc_generator(df):
+        for document in df:
+            yield {
+                "_index": 'lens',
+                "_source": document,
+            }
+
+    helpers.bulk(es_client, doc_generator(docs))
+    # response = client.bulk(index='lens', body=docs)
+
+
 def ingest_items(actions):
     rand_days = random.randint(0, 48)
     write_time = datetime.datetime.utcnow() - datetime.timedelta(hours=rand_days)
@@ -97,6 +116,63 @@ max_batch_size = 1000
 batch_size = max_batch_size * thread_count
 
 
+def read_lens_data_es():
+    i = 0
+    real_count = 0
+    count = 0
+    points = []
+    skipped = 0
+    batches = {}
+    total_time = 0
+    with open("/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb") as f:
+        for record in ijson.items(f, "item"):
+            message = record["Message"]["data"]
+            type = record["Message"]["type"]
+            if "profileId" in message and "pubId" in message:
+                profile_id = message["profileId"]
+                pub_id = message["pubId"]
+
+                tags = {}
+                if "timestamp" in message and '$numberLong' in message["timestamp"]:
+                    t = int(message["timestamp"]['$numberLong']) / 1000
+                    time_stamp = datetime.fromtimestamp(t).isoformat()
+                else:
+                    t = record["Timestamp"]
+                    time_stamp = datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+                for key, value in message.items():
+                    if key != "timestamp":
+                        tags[key] = value
+                id = record["_id"]["$oid"]
+                action = Action(id=id, item_id=pub_id, user_id=profile_id, tags=tags, value=1, type=type,
+                                created_at=time_stamp)
+                action_dict = action.dict()
+                action_dict["_id"] = action.id
+                current_index = i % thread_count
+                if current_index not in batches:
+                    batches[current_index] = []
+                batches[current_index].append(action_dict)
+                i = i + 1
+                count = count + 1
+            else:
+                skipped = skipped + 1
+            if i >= batch_size:
+                start = time.time()
+                process_batches(batches)
+                end = time.time()
+                total_time = total_time + (end - start)
+                total_average = count / total_time
+                speed = (max_batch_size * thread_count) / (end - start)
+                print("Docs:" + str(max_batch_size * thread_count))
+                print("Total time:" + str(end - start))
+                print("Speed: " + str(speed) + "/second")
+                print("Total Average: " + str(total_average))
+                i = 0
+                batches = {}
+                print("Processed: " + str(count) + "\n")
+            real_count = real_count + 1
+        write_points(points)
+
+
 def read_lens_data():
     i = 0
     real_count = 0
@@ -106,7 +182,7 @@ def read_lens_data():
     batches = {}
     total_time = 0
     with open(
-        "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb"
+            "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb"
     ) as f:
         for record in ijson.items(f, "item"):
             message = record["Message"]["data"]
@@ -167,7 +243,7 @@ def read_lens_data():
 def process_batches(batches):
     threads_list = list()
     for key, b in batches.items():
-        x = threading.Thread(target=write_points, args=(b,))
+        x = threading.Thread(target=add_items_to_es, args=(b,))
         x.start()
         threads_list.append(x)
     for t in threads_list:
@@ -175,7 +251,7 @@ def process_batches(batches):
         print("Waiting for thread")
 
 
-read_lens_data()
+read_lens_data_es()
 
 
 def ingest_actions():

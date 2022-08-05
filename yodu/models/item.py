@@ -1,11 +1,14 @@
-from typing import Optional
+from datetime import datetime
+from typing import Optional, Dict
+from uuid import uuid4
 
-from pydantic import BaseModel
-
-from yodu.models.category import Category
+from pydantic import BaseModel, Field
 
 
 class Item(BaseModel):
-    id: str
-    name = str
-    category = Optional[Category]
+    id: str = Field(default_factory=uuid4)
+    tags: Optional[Dict]
+    type: str
+    value: float
+    tags: Optional[Dict]
+    created_at: datetime = Field(default_factory=datetime.now)

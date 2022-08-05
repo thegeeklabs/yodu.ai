@@ -1,33 +1,41 @@
 import time
-import uuid
 from queue import Queue
 from threading import Thread
 
-from yodu.db.es.es_client import ESClient
+import yodu.provider as provider
+from yodu import ESClient
+from yodu.helpers.action_helper import ActionHelper
+from yodu.helpers.item_helper import ItemHelper
 from yodu.provider.provider_base import ProviderBase
-from yodu.recommeder.db.influx_db import InfluxDb
 
 NUM_THREADS = 5
 que = Queue()
 threads_list = list()
 
 
-class RecommenderEngine:
-    __recommender_id = None
+class Recommender:
+    __recommender_name = None
     __providers = None
-    __es_client = None
-    __influxdb_client = None
     __algo_spec = None
+    __indices = None
+    __es_client = None
 
-    def __init__(self, recommender_id, algo_spec):
-        if not recommender_id:
-            self.recommender_id = recommender_id
-        else:
-            self.recommender_id = uuid.uuid4()
-        self.__es_client = ESClient()
-        self.__influxdb_client = InfluxDb().get_client()
-        self.__algo_spec = algo_spec
-        self.set_algo_specifications(algo_spec)
+    item = None
+    action = None
+    provider = None
+
+    def __init__(self, name, indices, algo_spec=None, es_client=None):
+        self.recommender_name = name
+        self.__indices = indices
+        if algo_spec:
+            self.__algo_spec = algo_spec
+        self.__es_client = es_client
+        if self.__es_client == None:
+            self.__es_client = ESClient().get_client()
+        self.provider = provider
+
+        self.item = ItemHelper(index_name=self.__indices["items"], es_client=self.__es_client)
+        self.action = ActionHelper(index_name=self.__indices["actions"], es_client=self.__es_client)
 
     def set_algo_specifications(self, algo_spec):
         for name, config in algo_spec.items():
