@@ -36,6 +36,13 @@ class Recommender:
         self.action = ActionHelper(index_name=self.__indices["actions"], es_client=self.__es_client)
         self.algo_spec = AlgoSpecHelper(recommender_name=self.recommender_name)
 
+    def get_docs(self, item_index, item_ids: list):
+        hits = self.__es_client.mget(index=item_index, body={'ids': item_ids})
+        items = []
+        for doc in hits.body["docs"]:
+            items.append(doc["_source"])
+        return items
+
     def get_items(self, request: Request):
         """
         Algo:
@@ -66,4 +73,8 @@ class Recommender:
                     top_items_ids[item_id] = 1
                     top_items_providers[item_id] = [provider_name]
         top_items_ids = dict(sorted(top_items_ids.items(), key=lambda item: item[1], reverse=True))
-        return top_items_ids
+        top_items_ids = top_items_ids[:request.limit]
+        items = self.get_docs(item_index=self.__indices["items"], item_ids=list(top_items_ids.keys()))
+        for item in items:
+            item["source_provider"] = top_items_providers[item["id"]][0]
+        return items

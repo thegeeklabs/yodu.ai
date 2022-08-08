@@ -18,13 +18,13 @@ class ItemHelper:
     def add(self, items: list):
 
         def convert_items(items_list):
-            for action in items_list:
-                if not action.id:
-                    action.id = uuid.uuid4()
+            for item in items_list:
+                if not item.id:
+                    item.id = uuid.uuid4()
                 doc = {
                     "_index": self.index_name,
-                    "_id": str(action.id),
-                    "_source": action.dict()
+                    "_id": str(item.id),
+                    "_source": item.dict()
                 }
                 yield doc
 
