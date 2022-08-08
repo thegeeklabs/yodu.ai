@@ -1,12 +1,14 @@
 import json
-from typing import Optional
+from typing import Dict, Any
 
+from models.request import Request
+from yodu import ESClient
 from yodu.provider.provider_base import ProviderBase
-from yodu.recommeder.db.influx_db import InfluxDb
 from yodu.utils.utils import time_ago_to_date
 
 meta = {
     "name": "TopItemsByUserAction",
+    "version": "0.0.1",
     "author": "Shashank Agarwal",
     "description": "Return top items for a source by action_type \
         Example: Return top liked items for a given source \
@@ -15,20 +17,20 @@ meta = {
     "args": {
         "action_type": {
             "type": "str",
-            "source": "request.action_type"
+            "source": "request.args.action_type"
         },
         "days_ago": {
             "type": "int",
-            "source": "request.days_ago",
+            "source": "request.args.days_ago",
             "default": 1
         },
         "user_id": {
             "type": "str",
-            "source": "request.user_id"
+            "source": "request.args.user_id"
         },
         "tag": {
             "type": "str",
-            "source": "request.tag"
+            "source": "request.args.tag"
         },
         "next_token": {
             "type": "str",
@@ -48,37 +50,61 @@ meta = {
 }
 
 
-class TopItemsByUserAction(ProviderBase):
-    action_type: Optional[str]
-    tag: Optional[str]
-    user_id: Optional[str]
-    next_token: Optional[str]
-    __influx_db_client = InfluxDb().get_client()
+class Provider(ProviderBase):
+    __es_client = None
+    __indices = None
 
-    def init(self, kwargs):
-        if "action_type" in kwargs:
-            self.action_type = kwargs["action_type"]
-        if "tag" in kwargs:
-            self.tag = kwargs["tag"]
-        if "User_id" in kwargs:
-            self.user_id = kwargs["user_id"]
-        if "next_token" in kwargs:
-            self.next_token = kwargs["next_token"]
+    def __init__(self, indices=Dict, **data: Any):
+        super().__init__(**data)
+        if not self.__es_client:
+            self.__es_client = ESClient().get_client()
+        self.__indices = indices
 
-    # def build_input_args(self, request):
-    #     args = {}
-    #     args_meta = meta["args"]
-    #     for arg in args_meta:
+    def get_meta(self):
+        return meta
 
-
-    def get_items(self, request):
+    def build_input(self, config: Dict, request: Request):
+        input_dict = {}
         '''
-        Returns top tag for all items by action_type
-        Ex: Top sources by likes
-        :param days_ago:
-        :param action_type:
-        :param tag:
-        :param limit:
+        Get all values from request
+        Then get all values from config
+        Rest all values from meta
+        '''
+        if request.limit:
+            input_dict["limit"] = request.limit
+        if request.offset:
+            input_dict["offset"] = request.offset
+        if request.user_id:
+            input_dict["user_id"] = request.user_id
+        if request.args:
+            for key, val in request.args.items():
+                input_dict[key] = val
+        for name, val in config.items():
+            if name not in input_dict:
+                input_dict[name] = config[name]
+        for name, val in meta["args"].items():
+            if name not in input_dict and name in meta["args"] and "default" in meta["args"][name]:
+                input_dict[name] = meta["args"][name]["default"]
+        return input_dict
+
+    def execute(self, query):
+        action_index = self.__indices["actions"]
+        hits = self.__es_client.search(index=action_index, size=0, **query)
+        res = hits.body["aggregations"]['top_tag_by_action']['buckets']
+        '''
+        returns a list of top categories.
+        We then get items from each of these categories and rank by count
+        '''
+        items_dict = {}
+
+        self.__es_client.get_items(self.__indices["items"])
+        return res
+
+    def get_items(self, config: Dict, request: Request):
+        '''
+
+        :param config:
+        :param request:
         :return:
         '''
         query = '''
@@ -127,13 +153,15 @@ class TopItemsByUserAction(ProviderBase):
           }
         }
         '''
+        input_dict = self.build_input(config=config, request=request)
         time_now = time_ago_to_date("now")
-        time_ago = time_ago_to_date(str(days_ago) + " days ago")
+        time_ago = time_ago_to_date(str(input_dict["days_ago"]) + " days ago")
         query = query.replace("DATE_NOW_PLACEHOLDER", time_now)
         query = query.replace("DATE_AGO_PLACEHOLDER", time_ago)
-        query = query.replace("ACTION_TYPE_PLACEHOLDER", action_type)
-        query = query.replace("TAG_PLACEHOLDER", tag)
-        query = query.replace("LIMIT_PLACEHOLDER", str(limit))
+        query = query.replace("ACTION_TYPE_PLACEHOLDER", input_dict["action_type"])
+        query = query.replace("TAG_PLACEHOLDER", input_dict["tag"])
+        query = query.replace("LIMIT_PLACEHOLDER", str(input_dict["limit"]))
         query = query.replace("ITEMS_PER_ACTION", str(2))
         res = json.loads(query)
-        return res
+        results = self.execute(res)
+        return results

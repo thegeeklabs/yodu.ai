@@ -2,12 +2,14 @@ import uuid
 
 from elasticsearch import helpers
 
+from yodu import ESClient
+
 
 class ItemHelper:
     es_client = None
     index_name = None
 
-    def __init__(self, index_name, es_client):
+    def __init__(self, index_name, es_client: ESClient):
         assert es_client is not None
         assert index_name is not None
         self.es_client = es_client
@@ -27,3 +29,4 @@ class ItemHelper:
                 yield doc
 
         helpers.bulk(self.es_client, convert_items(items))
+

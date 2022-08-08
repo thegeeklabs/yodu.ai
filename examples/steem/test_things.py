@@ -1,8 +1,6 @@
-from typing import Dict, Optional
+import yodu.provider as provider
 
-from pydantic import BaseModel, Field
-
-# provider.enable(recommender_name="test_recommender", name="top_item_by_user_action")
+provider.add(recommender_name="test_recommender", name="top_item_by_user_action")
 
 meta = {
     "name": "TopItemsByUserAction",
@@ -46,8 +44,3 @@ meta = {
     }
 }
 
-
-
-
-
-build_input_args(request)

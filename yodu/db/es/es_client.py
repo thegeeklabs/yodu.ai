@@ -16,22 +16,9 @@ class ESClient:
             self.client = Elasticsearch(hosts=es_uri, verify_certs=False)
         return self.client
 
-    def add_records(self, index_name, items):
-        try:
-            for item in items:
-                print(item)
-        except Exception as e:
-            raise e
-        return True
-
-    def get_records(self):
-        pass
-
-    def add_users(self, users):
-        return users
-
-    def add_actions(self, actions):
-        return actions
-
-    def query(self, **kwargs):
-        pass
+    def get_docs(self, item_index, item_ids: list):
+        hits = self.get_client().mget(index=item_index,
+                                body={
+                                    'ids': item_ids
+                                })
+        return hits

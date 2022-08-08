@@ -4,7 +4,7 @@ from models.item import Item
 
 def load_test_items():
     items = []
-    for i in range(0, 5):
+    for i in range(0, 10):
         item = Item(
             id="test_items_" + str(i),
             tags={
@@ -19,14 +19,14 @@ def load_test_items():
 
 def load_test_actions():
     actions = []
-    for i in range(0, 5):
+    for i in range(10, 13):
         action = Action(
             id="test_action_" + str(i),
             user_id="test_user" + str(i),
-            item_id="test_items_" + str(i),
+            item_id="test_items_1",
             tags={
                 "category": "test_category_" + str(i),
-                "source": "test_source_" + str(i)
+                "source": "test_source_1"
             },
             type="LIKE",
             value=1)
