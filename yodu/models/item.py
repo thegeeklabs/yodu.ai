@@ -7,8 +7,8 @@ from pydantic import BaseModel, Field
 
 class Item(BaseModel):
     id: str = Field(default_factory=uuid4)
+    source: str
     tags: Optional[Dict]
-    type: str
-    value: float
-    tags: Optional[Dict]
+    source_provider: str
     created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)

@@ -18,7 +18,7 @@ class ESClient:
 
     def get_docs(self, item_index, item_ids: list):
         hits = self.get_client().mget(index=item_index,
-                                body={
-                                    'ids': item_ids
-                                })
+                                      body={
+                                          'ids': item_ids
+                                      })
         return hits
