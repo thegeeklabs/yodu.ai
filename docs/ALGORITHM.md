@@ -4,8 +4,8 @@ Yodu.ai is built using the concept of providers.
 A provider can take n number or arguments and returns a list of `items` based on various logic.
 
 ## Algorithm Specification
-Yodu allows the users to specify as multiple Algorithms that the feed must adhere to use, using a configration file 
-called as `algo_spec`. 
+Yodu allows the users to specify as multiple Algorithms that the feed must adhere to use, using a configuration file
+called as `algo_spec`.
 An Algo Specification lists a number of providers that are called in parallel to get a list of items.
 You can provide weights to each Provider to make a provider returns more `items` than other providers, If no weights
 are given then all Providers get a uniform weight.
@@ -17,7 +17,7 @@ are given then all Providers get a uniform weight.
 - Recommender waits for X seconds, then makes a final list.
 - Based on algo_spec, Recommender then filters, sorts & cleans up the list.
 - The list is then returned to the user.
-- Each request must specif `offset` & `limit`. These values are passed to each provider.
+- Each request must specific `offset` & `limit`. These values are passed to each provider.
 
 ## Auto-balancing Recommder System
 To make the items are specific to each user. Yodu calculates a user_meta. This user_meta contains stats on which
@@ -33,7 +33,7 @@ Yodu comes with a set of default providers, which are described below.
         - Get top liked categories by user
         - Options:
           - [Latest] Get top articles(based on same action) from these categories
-          - [Ranked BY Action] 
+          - [Ranked BY Action]
 - Trending items by a tag
   - Trending is calculated by Linear Regression
   - Example:
@@ -43,5 +43,5 @@ Yodu comes with a set of default providers, which are described below.
   - Used Matrix Multiplication to find similar items liked by similar users
 
 ## ML
-Similar to other Providers, ML providers are treated the same way. The providers are loaded in memory when the 
+Similar to other Providers, ML providers are treated the same way. The providers are loaded in memory when the
 application starts. Each ML provider must return a list of items when asked for.

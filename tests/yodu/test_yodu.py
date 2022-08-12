@@ -23,7 +23,11 @@ test_action = [
     }
 ]
 
-test_users = {"user_id": "1", "created_at": "some_date", "updated_at": "some_date"}
+test_users = {
+    "user_id": "1",
+    "created_at": "some_date",
+    "updated_at": "some_date",
+}
 
 
 def test_yodu():

@@ -16,9 +16,9 @@ from(bucket: "lens")
       |> filter(fn: (r) => r["_field"] == "READ")
       |> group(columns: ["category"]) // <-- group by application tag
       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-    
+
     original |> yield(name: "original")
-    
+
     original
     |> statsmodels.linearRegression()
     |> yield(name: "lr")
@@ -31,11 +31,10 @@ from(bucket: "lens")
       |> filter(fn: (r) => r["_field"] == "READ")
       |> group(columns: ["category"])
       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
-      
+
     original |> yield(name: "original")
-    
-    original   
+
+    original
     |> statsmodels.linearRegression()
     |> map(fn: (r) => ({ r with _value: r.y_hat }))
     |> yield(name: "linreg")
-    

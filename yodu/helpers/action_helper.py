@@ -14,7 +14,6 @@ class ActionHelper:
         self.index_name = index_name
 
     def add(self, actions: list):
-
         def convert_actions(actions_list):
             for action in actions_list:
                 if not action.id:
@@ -22,7 +21,7 @@ class ActionHelper:
                 doc = {
                     "_index": self.index_name,
                     "_id": str(action.id),
-                    "_source": action.dict()
+                    "_source": action.dict(),
                 }
                 yield doc
 

@@ -3,12 +3,12 @@ from models.item import Item
 
 
 def load_test_items():
-    '''
+    """
     Create items with IDS: items0, item2...items99
     With categories ranging from category0...category9
     With source ranging from source0,...source9
     :return:
-    '''
+    """
     items = []
     for i in range(0, 100):
         item = Item(
@@ -16,8 +16,9 @@ def load_test_items():
             source="source" + str(i % 10),
             tags={
                 "category": "category" + str(i % 10),
-                "source": "source" + str(i % 10)
-            })
+                "source": "source" + str(i % 10),
+            },
+        )
         items.append(item)
     return items
 
@@ -34,7 +35,8 @@ def load_test_actions():
                 "source": "source" + str(i % 10),
             },
             type="LIKE",
-            value=1)
+            value=1,
+        )
         actions.append(action)
     for i in range(0, 100):
         action = Action(
@@ -46,6 +48,7 @@ def load_test_actions():
                 "source": "source" + str(i % 10),
             },
             type="READ",
-            value=1)
+            value=1,
+        )
         actions.append(action)
     return actions

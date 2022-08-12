@@ -16,7 +16,6 @@ class ItemHelper:
         self.index_name = index_name
 
     def add(self, items: list):
-
         def convert_items(items_list):
             for item in items_list:
                 if not item.id:
@@ -24,9 +23,8 @@ class ItemHelper:
                 doc = {
                     "_index": self.index_name,
                     "_id": str(item.id),
-                    "_source": item.dict()
+                    "_source": item.dict(),
                 }
                 yield doc
 
         helpers.bulk(self.es_client, convert_items(items))
-

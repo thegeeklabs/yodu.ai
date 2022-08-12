@@ -1,7 +1,7 @@
 # ElasticSearch Queries
 
 ## Top Publications by comment count
-This query returns top Publication ID based on commnents, with X number of comments as well.
+This query returns top Publication ID based on comments, with X number of comments as well.
 Query is filtered by range as well
 Problems: ES only searches 10K documents
 ```

@@ -1,5 +1,7 @@
 from yodu.db.es.es_client import ESClient
-from provider.providers.top_item_by_user_action.provider import TopItemsByUserAction
+from provider.providers.top_item_by_user_action.provider import (
+    TopItemsByUserAction,
+)
 from yodu.recommeder import RecommenderEngine
 
 org = "influxdata"
@@ -43,8 +45,13 @@ def test_top_item_by_action_by_user():
 
 def test_top_items_by():
     provider = TopItemsByUserAction()
-    query = provider.top_by_action(days_ago=7, action_type="INDEXER_COMMENT_CREATED", tag="pubId", limit=10)
+    query = provider.top_by_action(
+        days_ago=7,
+        action_type="INDEXER_COMMENT_CREATED",
+        tag="pubId",
+        limit=10,
+    )
     es_client = ESClient().get_client()
     hits = es_client.search(index="lens", size=0, **query)
-    res = hits.body["aggregations"]['top_tag_by_action']['buckets']
+    res = hits.body["aggregations"]["top_tag_by_action"]["buckets"]
     print(res)

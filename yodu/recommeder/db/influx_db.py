@@ -25,7 +25,9 @@ class InfluxDb:
     def get_query_api(self):
         return self.get_client().query_api()
 
-    def top_items_by_source(self, days_ago, action_type, tag_type, source, limit=5):
+    def top_items_by_source(
+        self, days_ago, action_type, tag_type, source, limit=5
+    ):
         """
         Return top items for a source by action_type
         Example: Return top liked items for a given source

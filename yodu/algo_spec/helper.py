@@ -15,7 +15,12 @@ class AlgoSpecHelper:
 
     def __init__(self, recommender_name):
         self.__recommender_name = recommender_name
-        self.__algo_spec_dir = os.path.dirname(os.path.realpath(__file__)) + "/repo/" + self.__recommender_name + "/"
+        self.__algo_spec_dir = (
+            os.path.dirname(os.path.realpath(__file__))
+            + "/repo/"
+            + self.__recommender_name
+            + "/"
+        )
         if exists(self.__algo_spec_dir + ALGO_FILE_NAME):
             self.load()
 

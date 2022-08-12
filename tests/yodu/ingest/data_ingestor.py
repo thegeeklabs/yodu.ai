@@ -18,7 +18,9 @@ from yodu.recommeder.db.influx_db import InfluxDb
 
 logger = logging.getLogger(__name__)
 
-steemit_blockchain_path = "/Users/shashank/PycharmProjects/yodu/data/steem.blockchain.json"
+steemit_blockchain_path = (
+    "/Users/shashank/PycharmProjects/yodu/data/steem.blockchain.json"
+)
 
 
 class Indexer:
@@ -31,7 +33,7 @@ class Indexer:
     def add_users(self, users):
         return self.__es_client.add_records(users)
 
-    def add_actions(self, actions:list):
+    def add_actions(self, actions: list):
         return self.__es_client.add_actions(actions)
 
 
@@ -48,7 +50,10 @@ def create_sample_actions():
             user_id=rand_user,
             type="READ",
             value=rand2,
-            tags={"source": "test" + str(rand3), "category": "test" + str(rand4)},
+            tags={
+                "source": "test" + str(rand3),
+                "category": "test" + str(rand4),
+            },
         )
         actions.append(action)
     return actions
@@ -76,7 +81,9 @@ def write_points(points):
     except InfluxDBError as e:
         print(e)
         if e.response.status == 401:
-            raise Exception(f"Insufficient write permissions to 'my-bucket'.") from e
+            raise Exception(
+                f"Insufficient write permissions to 'my-bucket'."
+            ) from e
         raise
     client.close()
 
@@ -88,7 +95,7 @@ def add_items_to_es(docs):
     def doc_generator(df):
         for document in df:
             yield {
-                "_index": 'lens',
+                "_index": "lens",
                 "_source": document,
             }
 
@@ -98,7 +105,9 @@ def add_items_to_es(docs):
 
 def ingest_items(actions):
     rand_days = random.randint(0, 48)
-    write_time = datetime.datetime.utcnow() - datetime.timedelta(hours=rand_days)
+    write_time = datetime.datetime.utcnow() - datetime.timedelta(
+        hours=rand_days
+    )
     for action in actions:
         point = (
             Point(action.type)
@@ -124,7 +133,10 @@ def read_lens_data_es():
     skipped = 0
     batches = {}
     total_time = 0
-    with open("/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb") as f:
+    with open(
+        "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json",
+        "rb",
+    ) as f:
         for record in ijson.items(f, "item"):
             message = record["Message"]["data"]
             type = record["Message"]["type"]
@@ -133,18 +145,30 @@ def read_lens_data_es():
                 pub_id = message["pubId"]
 
                 tags = {}
-                if "timestamp" in message and '$numberLong' in message["timestamp"]:
-                    t = int(message["timestamp"]['$numberLong']) / 1000
+                if (
+                    "timestamp" in message
+                    and "$numberLong" in message["timestamp"]
+                ):
+                    t = int(message["timestamp"]["$numberLong"]) / 1000
                     time_stamp = datetime.fromtimestamp(t).isoformat()
                 else:
                     t = record["Timestamp"]
-                    time_stamp = datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+                    time_stamp = datetime.strptime(
+                        t, "%Y-%m-%dT%H:%M:%S.%fZ"
+                    ).isoformat()
                 for key, value in message.items():
                     if key != "timestamp":
                         tags[key] = value
                 id = record["_id"]["$oid"]
-                action = Action(id=id, item_id=pub_id, user_id=profile_id, tags=tags, value=1, type=type,
-                                created_at=time_stamp)
+                action = Action(
+                    id=id,
+                    item_id=pub_id,
+                    user_id=profile_id,
+                    tags=tags,
+                    value=1,
+                    type=type,
+                    created_at=time_stamp,
+                )
                 action_dict = action.dict()
                 action_dict["_id"] = action.id
                 current_index = i % thread_count
@@ -182,7 +206,8 @@ def read_lens_data():
     batches = {}
     total_time = 0
     with open(
-            "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json", "rb"
+        "/Users/shashank/PycharmProjects/yodu/data/lens-notifications.json",
+        "rb",
     ) as f:
         for record in ijson.items(f, "item"):
             message = record["Message"]["data"]
@@ -192,7 +217,10 @@ def read_lens_data():
                 pub_id = message["pubId"]
 
                 tags = {}
-                if "timestamp" in message and "$numberLong" in message["timestamp"]:
+                if (
+                    "timestamp" in message
+                    and "$numberLong" in message["timestamp"]
+                ):
                     t = int(message["timestamp"]["$numberLong"]) / 1000
                     time_stamp = datetime.fromtimestamp(t).isoformat()
                 else:

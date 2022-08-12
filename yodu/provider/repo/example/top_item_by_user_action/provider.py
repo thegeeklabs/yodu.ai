@@ -17,38 +17,18 @@ meta = {
         Example: Return top read items for a given source \
         Example: Return top read items for a given category",
     "args": {
-        "action_type": {
-            "type": "str",
-            "source": "request.args.action_type"
-        },
+        "action_type": {"type": "str", "source": "request.args.action_type"},
         "days_ago": {
             "type": "int",
             "source": "request.args.days_ago",
-            "default": 1
+            "default": 1,
         },
-        "user_id": {
-            "type": "str",
-            "source": "request.args.user_id"
-        },
-        "tag": {
-            "type": "str",
-            "source": "request.args.tag"
-        },
-        "next_token": {
-            "type": "str",
-            "source": "request.next_token"
-        },
-        "limit": {
-            "type": "int",
-            "source": "request.limit",
-            "default": 10
-        },
-        "offset": {
-            "type": "int",
-            "source": "request.offset",
-            "default": 0
-        },
-    }
+        "user_id": {"type": "str", "source": "request.args.user_id"},
+        "tag": {"type": "str", "source": "request.args.tag"},
+        "next_token": {"type": "str", "source": "request.next_token"},
+        "limit": {"type": "int", "source": "request.limit", "default": 10},
+        "offset": {"type": "int", "source": "request.offset", "default": 0},
+    },
 }
 
 
@@ -70,11 +50,11 @@ class Provider(ProviderBase):
 
     def build_input(self, config: Dict, request: Request):
         input_dict = {}
-        '''
+        """
         Get all values from request
         Then get all values from config
         Rest all values from meta
-        '''
+        """
         if request.limit:
             input_dict["limit"] = request.limit
         if request.offset:
@@ -88,40 +68,48 @@ class Provider(ProviderBase):
             if name not in input_dict:
                 input_dict[name] = config[name]
         for name, val in meta["args"].items():
-            if name not in input_dict and name in meta["args"] and "default" in meta["args"][name]:
+            if (
+                name not in input_dict
+                and name in meta["args"]
+                and "default" in meta["args"][name]
+            ):
                 input_dict[name] = meta["args"][name]["default"]
         return input_dict
 
     def execute(self, query):
         action_index = self.__indices["actions"]
         hits = self.__es_client.search(index=action_index, size=0, **query)
-        res = hits.body["aggregations"]['top_tag_by_action']['buckets']
-        '''
+        res = hits.body["aggregations"]["top_tag_by_action"]["buckets"]
+        """
         returns a list of top categories.
         We then get items from each of these categories and rank by count
-        '''
+        """
         items_dict = {}
         for hit in res:
             print(hit)
-            for row in hit['top_action_hits']['hits']['hits']:
+            for row in hit["top_action_hits"]["hits"]["hits"]:
                 item = row["_source"]
                 if "item_id" in item:
                     if item["item_id"] in items_dict:
-                        items_dict[item["item_id"]] = items_dict[item["item_id"]] + 1
+                        items_dict[item["item_id"]] = (
+                            items_dict[item["item_id"]] + 1
+                        )
                     else:
                         items_dict[item["item_id"]] = 1
-        items_dict = dict(sorted(items_dict.items(), key=lambda item: item[1], reverse=True))
+        items_dict = dict(
+            sorted(items_dict.items(), key=lambda item: item[1], reverse=True)
+        )
         top_items = list(items_dict.keys())
         return top_items
 
     def get_items(self, config: Dict, request: Request):
-        '''
+        """
 
         :param config:
         :param request:
         :return:
-        '''
-        query = '''
+        """
+        query = """
         {
           "query": {
                 "bool": {
@@ -166,13 +154,15 @@ class Provider(ProviderBase):
             }
           }
         }
-        '''
+        """
         input_dict = self.build_input(config=config, request=request)
         time_now = time_ago_to_date("now")
         time_ago = time_ago_to_date(str(input_dict["days_ago"]) + " days ago")
         query = query.replace("DATE_NOW_PLACEHOLDER", time_now)
         query = query.replace("DATE_AGO_PLACEHOLDER", time_ago)
-        query = query.replace("ACTION_TYPE_PLACEHOLDER", input_dict["action_type"])
+        query = query.replace(
+            "ACTION_TYPE_PLACEHOLDER", input_dict["action_type"]
+        )
         query = query.replace("TAG_PLACEHOLDER", input_dict["tag"])
         query = query.replace("LIMIT_PLACEHOLDER", str(input_dict["limit"]))
         query = query.replace("ITEMS_PER_ACTION", str(5))
