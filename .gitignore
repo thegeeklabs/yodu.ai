@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+pytest-coverage.*
 
 # Translations
 *.mo
@@ -147,7 +148,9 @@ dmypy.json
 .pyre/
 
 # pytype static type analyzer
-.pytype/
+.pytype
+.pyc
+
 
 # Cython debug symbols
 cython_debug/

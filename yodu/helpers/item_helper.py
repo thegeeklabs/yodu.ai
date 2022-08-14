@@ -27,4 +27,5 @@ class ItemHelper:
                 }
                 yield doc
 
-        helpers.bulk(self.es_client, convert_items(items))
+        results = helpers.bulk(self.es_client, convert_items(items))
+        print(results)

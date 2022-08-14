@@ -1,16 +1,17 @@
 import unittest
 
 import yodu
-from examples.steem.helpers import load_test_items, load_test_actions
-from models.request import Request
+from test_utils.test_utils import load_test_items, load_test_actions
+from yodu.models.request import Request
 
 
 class TestYodu(unittest.TestCase):
-
     def test_recommender(self):
-        recommender = yodu.create_recommender(name="example")
+        recommender_name = "example"
+        yodu.delete_recommender(name=recommender_name)
+        recommender = yodu.create_recommender(name=recommender_name)
 
-        recommender = yodu.get_recommender(name="example")
+        recommender = yodu.get_recommender(name=recommender_name)
 
         # Add Items to Recommender
         items = load_test_items()
@@ -55,11 +56,13 @@ class TestYodu(unittest.TestCase):
                     "duration": "24h",
                     "config": {"action_type": "ALL"},
                 },
-            }
+            },
         }
         recommender.algo_spec.set(algo_spec=algo_spec)
 
-        args = {"days_ago": "7"}
-        request = Request(user_id="test_user_1", args=args)
+        props = {"days_ago": "7"}
+        request = Request(user_id="test_user_1", props=props)
 
         items = recommender.get_items(request=request)
+        assert items is not None
+        assert len(items) == 10

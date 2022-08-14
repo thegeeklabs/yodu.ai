@@ -3,8 +3,8 @@ from typing import Dict, Any
 
 import ray
 
-from models.request import Request
 from yodu import ESClient
+from yodu.models.request import Request
 from yodu.provider.provider_base import ProviderBase
 from yodu.utils.utils import time_ago_to_date
 
@@ -16,15 +16,15 @@ meta = {
         Example: Return top liked items for a given source \
         Example: Return top read items for a given source \
         Example: Return top read items for a given category",
-    "args": {
-        "action_type": {"type": "str", "source": "request.args.action_type"},
+    "props": {
+        "action_type": {"type": "str", "source": "request.props.action_type"},
         "days_ago": {
             "type": "int",
-            "source": "request.args.days_ago",
+            "source": "request.props.days_ago",
             "default": 1,
         },
-        "user_id": {"type": "str", "source": "request.args.user_id"},
-        "tag": {"type": "str", "source": "request.args.tag"},
+        "user_id": {"type": "str", "source": "request.props.user_id"},
+        "tag": {"type": "str", "source": "request.props.tag"},
         "next_token": {"type": "str", "source": "request.next_token"},
         "limit": {"type": "int", "source": "request.limit", "default": 10},
         "offset": {"type": "int", "source": "request.offset", "default": 0},
@@ -37,74 +37,18 @@ class Provider(ProviderBase):
     __es_client = None
     __indices = None
     __name = None
+    __meta = None
 
     def __init__(self, indices=Dict, name=str, **data: Any):
-        super().__init__(**data)
+        super().__init__(meta=meta, data=data)
         self.__name = name
         if not self.__es_client:
-            self.__es_client = ESClient().get_client()
+            self.__es_client = ESClient()
         self.__indices = indices
-
-    def get_meta(self):
-        return meta
-
-    def build_input(self, config: Dict, request: Request):
-        input_dict = {}
-        """
-        Get all values from request
-        Then get all values from config
-        Rest all values from meta
-        """
-        if request.limit:
-            input_dict["limit"] = request.limit
-        if request.offset:
-            input_dict["offset"] = request.offset
-        if request.user_id:
-            input_dict["user_id"] = request.user_id
-        if request.args:
-            for key, val in request.args.items():
-                input_dict[key] = val
-        for name, val in config.items():
-            if name not in input_dict:
-                input_dict[name] = config[name]
-        for name, val in meta["args"].items():
-            if (
-                    name not in input_dict
-                    and name in meta["args"]
-                    and "default" in meta["args"][name]
-            ):
-                input_dict[name] = meta["args"][name]["default"]
-        return input_dict
-
-    def execute(self, query):
-        action_index = self.__indices["actions"]
-        hits = self.__es_client.search(index=action_index, size=0, **query)
-        res = hits.body["aggregations"]["top_tag_by_action"]["buckets"]
-        """
-        returns a list of top categories.
-        We then get items from each of these categories and rank by count
-        """
-        items_dict = {}
-        for hit in res:
-            print(hit)
-            for row in hit["top_action_hits"]["hits"]["hits"]:
-                item = row["_source"]
-                if "item_id" in item:
-                    if item["item_id"] in items_dict:
-                        items_dict[item["item_id"]] = (
-                                items_dict[item["item_id"]] + 1
-                        )
-                    else:
-                        items_dict[item["item_id"]] = 1
-        items_dict = dict(
-            sorted(items_dict.items(), key=lambda item: item[1], reverse=True)
-        )
-        top_items = list(items_dict.keys())
-        return top_items
+        self.__meta = meta
 
     def get_items(self, config: Dict, request: Request):
         """
-
         :param config:
         :param request:
         :return:
@@ -131,7 +75,7 @@ class Provider(ProviderBase):
           "aggs": {
             "top_tag_by_action": {
               "terms": {
-                "field": "tags.TAG_PLACEHOLDER.keyword",
+                "field": "props.TAG_PLACEHOLDER.keyword",
                 "size": LIMIT_PLACEHOLDER
               },
               "aggs": {
@@ -145,7 +89,7 @@ class Provider(ProviderBase):
                       }
                     ],
                     "_source": {
-                      "includes": [ "item_id", "user_id","type" , "value", "tags" ]
+                      "includes": [ "item_id", "user_id","type" , "value", "props" ]
                     },
                     "size": ITEMS_PER_ACTION
                   }
@@ -167,5 +111,7 @@ class Provider(ProviderBase):
         query = query.replace("LIMIT_PLACEHOLDER", str(input_dict["limit"]))
         query = query.replace("ITEMS_PER_ACTION", str(5))
         res = json.loads(query)
-        results = self.execute(res)
+        results = self.execute(
+            es_client=self.__es_client, indices=self.__indices, query=res
+        )
         return [self.__name, results]

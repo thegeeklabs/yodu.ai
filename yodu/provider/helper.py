@@ -1,7 +1,7 @@
 import importlib
 import os
 
-from utils.utils import move_dir
+from yodu.utils.utils import move_dir
 
 
 class ProviderHelper:
@@ -25,7 +25,11 @@ class ProviderHelper:
         print(self.__provider_dir)
         # import yodu.provider.repo.getting_started.top_item_by_user_action.provider
         provider_path = (
-            "yodu.provider.repo.getting_started." + name + ".provider"
+            "yodu.provider.repo."
+            + self.__recommender_name
+            + "."
+            + name
+            + ".provider"
         )
 
         mod = importlib.import_module(provider_path)

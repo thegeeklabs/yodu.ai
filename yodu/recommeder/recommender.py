@@ -2,12 +2,12 @@ from queue import Queue
 
 import ray
 
-from algo_spec.helper import AlgoSpecHelper
-from models.request import Request
-from provider.helper import ProviderHelper
 from yodu import ESClient
+from yodu.algo_spec.helper import AlgoSpecHelper
 from yodu.helpers.action_helper import ActionHelper
 from yodu.helpers.item_helper import ItemHelper
+from yodu.models.request import Request
+from yodu.provider.helper import ProviderHelper
 
 NUM_THREADS = 5
 que = Queue()
@@ -47,6 +47,9 @@ class Recommender:
             items.append(doc["_source"])
         return items
 
+    def get_indices(self):
+        return self.__indices
+
     def get_items(self, request: Request):
         """
         Algo:
@@ -84,11 +87,13 @@ class Recommender:
                 top_items_ids.items(), key=lambda item: item[1], reverse=True
             )
         )
-        top_items_ids = top_items_ids[: request.limit]
-        items = self.get_docs(
-            item_index=self.__indices["items"],
-            item_ids=list(top_items_ids.keys()),
-        )
-        for item in items:
-            item["source_provider"] = top_items_providers[item["id"]][0]
-        return items
+        if len(top_items_ids) > 0:
+            top_items_ids = list(top_items_ids.keys())[: request.limit]
+            items = self.get_docs(
+                item_index=self.__indices["items"],
+                item_ids=top_items_ids,
+            )
+            for item in items:
+                item["source_provider"] = top_items_providers[item["id"]][0]
+            return items
+        return None
