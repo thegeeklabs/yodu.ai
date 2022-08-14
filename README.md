@@ -1,6 +1,12 @@
-# Yodu.ai
-
 [![PyPI version](https://badge.fury.io/py/yodu.svg)](https://badge.fury.io/py/yodu)
+
+[![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://docs.yodu.ai "Go to project documentation")
+
+## Join our community
+
+[![Community](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/yoduworkspace/shared_invite/zt-1e2dh3mhj-29bo7l0eMEr7HWAkCVn4hA)
+
+# About Yodu.ai
 
 A generic purpose Recommender System that can be configured for any UseCase.
 ExampleUseCase:
@@ -58,7 +64,7 @@ if it was previously created for this recommender.
 
 ## Add Items to recommender
 
-Represent the item that is recommended.
+An Item represents the item that is recommended.
 Example: Youtube video, ecommerce product, Article, Post etc.
 
 Each Item must have a "source" which can be a User or a type Source
