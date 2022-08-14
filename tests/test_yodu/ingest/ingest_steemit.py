@@ -4,7 +4,7 @@ from datetime import datetime
 from yodu.models.action import Action
 
 steemit_blockchain_path = (
-    "/Users/shashank/PycharmProjects/yodu/data/steem.blockchain.json"
+    "/Users/shashank/PycharmProjects/test_yodu/data/steem.blockchain.json"
 )
 
 """

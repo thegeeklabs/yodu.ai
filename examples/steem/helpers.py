@@ -14,7 +14,7 @@ def load_test_items():
         item = Item(
             id="item" + str(i),
             source="source" + str(i % 10),
-            tags={
+            props={
                 "category": "category" + str(i % 10),
                 "source": "source" + str(i % 10),
             },
@@ -30,7 +30,7 @@ def load_test_actions():
             id="action" + str(i),
             user_id="user" + str(i % 10),
             item_id="item" + str(i),
-            tags={
+            props={
                 "category": "category" + str(i % 10),
                 "source": "source" + str(i % 10),
             },
@@ -43,7 +43,7 @@ def load_test_actions():
             id="action" + str(i),
             user_id="user" + str(i % 10),
             item_id="item" + str(i),
-            tags={
+            props={
                 "category": "category" + str(i % 10),
                 "source": "source" + str(i % 10),
             },

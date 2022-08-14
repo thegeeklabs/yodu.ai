@@ -19,7 +19,7 @@ from yodu.recommeder.db.influx_db import InfluxDb
 logger = logging.getLogger(__name__)
 
 steemit_blockchain_path = (
-    "/Users/shashank/PycharmProjects/yodu/data/steem.blockchain.json"
+    "/Users/shashank/PycharmProjects/test_yodu/data/steem.blockchain.json"
 )
 
 
@@ -67,7 +67,7 @@ def action_to_point(action: Action):
     )
     point.tag("user_id", action.user_id)
     point.tag("item_id", action.item_id)
-    for key, value in action.tags.items():
+    for key, value in action.props.items():
         point.tag(key, value)
     return point
 
@@ -116,7 +116,7 @@ def ingest_items(actions):
         )
         point.tag("user_id", action.user_id)
         point.tag("item_id", action.item_id)
-        for key, value in action.tags.items():
+        for key, value in action.props.items():
             point.tag(key, value)
 
 

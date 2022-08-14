@@ -57,7 +57,7 @@ class Recommender:
         algo_spec = self.algo_spec.load()
 
         result_ids = []
-        for provider_name, provider_dict in algo_spec.items():
+        for provider_name, provider_dict in algo_spec["providers"].items():
             args = provider_dict["config"]
             provider_obj = self.provider.load_provider(
                 name=provider_dict["provider"]
