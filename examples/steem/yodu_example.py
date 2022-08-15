@@ -49,7 +49,7 @@ algo_spec = {
             "duration": "24h",
             "config": {"action_type": "ALL"},
         },
-    }
+    },
 }
 recommender.algo_spec.set(algo_spec=algo_spec)
 

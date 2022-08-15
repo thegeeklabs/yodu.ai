@@ -1,6 +1,8 @@
 [![PyPI version](https://badge.fury.io/py/yodu.svg)](https://badge.fury.io/py/yodu)
+[![Python package](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml/badge.svg)](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml)
 
 [![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://docs.yodu.ai "Go to project documentation")
+
 
 ## Join our community
 

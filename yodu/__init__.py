@@ -4,8 +4,8 @@ __author__ = "Shashank Agarwal"
 __license__ = "Apache"
 __copyright__ = "Copyright 2022-present The Geek Labs"
 
-from db.es.es_client import ESClient
-from recommeder.recommender import Recommender
+from yodu.db.es.es_client import ESClient
+from yodu.recommeder.recommender import Recommender
 
 TITLE = __title__
 VERSION = __version__
@@ -46,3 +46,11 @@ def get_recommender(name: str):
             if name + "_" + index in indices_dict:
                 indices[index] = name + "_" + index
     return Recommender(name=name, indices=indices, es_client=es)
+
+
+def delete_recommender(name: str):
+    recommeder = get_recommender(name)
+    es = ESClient().get_client()
+    indices = recommeder.get_indices()
+    for index, index_name in indices.items():
+        es.indices.delete(index=index_name)

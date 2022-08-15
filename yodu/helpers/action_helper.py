@@ -25,4 +25,5 @@ class ActionHelper:
                 }
                 yield doc
 
-        helpers.bulk(self.es_client, convert_actions(actions))
+        results = helpers.bulk(self.es_client, convert_actions(actions))
+        print(results)
