@@ -1,0 +1,62 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.3.0
+  hooks:
+  - id: check-yaml
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: check-docstring-first
+  - id: check-json
+  - id: pretty-format-json
+  - id: check-merge-conflict
+  - id: check-yaml
+  - id: detect-private-key
+  - id: mixed-line-ending
+  - id: requirements-txt-fixer
+- repo: https://github.com/psf/black
+  rev: 22.6.0
+  hooks:
+  - id: black
+- repo: https://github.com/PyCQA/flake8
+  rev: 5.0.4
+  hooks:
+  - id: flake8
+    additional_dependencies:
+    - flake8-docstrings
+    - flake8-black
+    - flake8-bugbear
+    - flake8-django
+    - flake8-pytest-style
+# TODO: Fix isort. Working fine on local, but breaking on CI/ CD.
+# - repo: https://github.com/pycqa/isort
+#   rev: 5.10.1
+#   hooks:
+#   - id: isort
+#     entry: isort --profile=black
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.1.0
+  hooks:
+  - id: codespell
+
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.4.0
+  hooks:
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.3.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: check-added-large-files
+- repo: https://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.74.1
+  hooks:
+  - id: terraform_fmt
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v2.31.0
+  hooks:
+  - id: commitizen
+    stages: [commit-msg]

@@ -1,59 +1,63 @@
-import site
-import sys
-import time
-from os import environ
-from pathlib import Path
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+"""
+Date: 2022/08/04 12:49
+Desc: Yodu.ai  A General purpose Open Source Recommendation Engine
+"""
+import ast
+import re
 
-from setuptools import setup, find_packages
+import setuptools
 
-# workround for enabling editable user pip installs
-site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
+with open("README.md", "r", encoding="utf-8") as f:
+    long_description = f.read()
 
-# version
-here = Path(__file__).absolute().parent
-version_data = {}
-with open(here.joinpath("yodu", "__init__.py"), "r") as f:
-    exec(f.read(), version_data)
-version = version_data.get("__version__", "0.0")
 
-# Get the long description from the README file
-with open(here.joinpath("README.md"), encoding="utf-8") as f:
-    LONG_DESCRIPTION = f.read()
+def get_version_string() -> str:
+    """
+    Get Yodu.ai version number
+    :return: version number
+    :rtype: str, e.g. '0.6.24'
+    """
+    with open("yodu/__init__.py", "rb") as _f:
+        version_line = re.search(
+            r"__version__\s+=\s+(.*)", _f.read().decode("utf-8")
+        ).group(1)
+        return str(ast.literal_eval(version_line))
 
-HASH = environ.get("HASH", None)
-if HASH is not None:
-    version += ".post" + str(int(time.time()))
 
-install_requires = [
-    "pydantic",
-    "typing",
-    "requests",
-    "pytest",
-    "elasticsearch",
-    "influxdb-client",
-    "python-dotenv",
-    "ijson==3.1.4"
-]
-
-setup(
+setuptools.setup(
     name="yodu",
-    version="0.0.1",
+    version=get_version_string(),
     author="Shashank Agarwal",
     author_email="shashank@thegeeklabs.com",
     description="Generic Purpose Open Source Recommender System",
     license="Apache 2.0",
-    keywords="recommendations recommendation recommenders recommender system engine "
-             "machine learning python spark gpu",
+    keywords=[
+        "recommendations",
+        "recommendation",
+        "recommenders",
+        "recommender",
+        "system",
+        "engine",
+        "machine learning",
+        "python",
+        "AI",
+        "ML",
+    ],
     url="https://github.com/thegeeklabs/yodu.ai",
-    package_dir={"yodu": "yodu"},
-    python_requires=">=3.6, <3.10",
-    packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
-    long_description=LONG_DESCRIPTION,
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    project_urls={
-        "Documentation": "https://github.com/thegeeklabs/yodu.ai/tree/dev/docs/",
-        "Wiki": "https://github.com/thegeeklabs/yodu.ai/tree/dev/docs/",
-    },
+    packages=setuptools.find_packages(),
+    install_requires=[
+        "pydantic",
+        "typing",
+        "requests",
+        "elasticsearch",
+        "python-dotenv",
+        "ijson",
+    ],
+    package_data={"": ["*.py", "*.json", "*.pk", "*.js", "*.zip"]},
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
@@ -71,6 +75,5 @@ setup(
         "Topic :: Utilities",
         "License :: OSI Approved :: Apache Software License",
     ],
+    python_requires=">=3.7",
 )
-
-

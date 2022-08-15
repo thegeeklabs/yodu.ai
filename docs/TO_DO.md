@@ -12,4 +12,3 @@ like to contribute then here is a list of TODOs that we maintain:
 - Backend Tasks
     - Add ElasticSearch to Indexer
 - Add Providers
-

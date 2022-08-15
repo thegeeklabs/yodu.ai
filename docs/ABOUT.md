@@ -16,7 +16,7 @@ Each Item must have a "source" which can be a User or a type Source
 Represent a type that produces items.
 A source can be an entity in itself or can be a User who created content.
 Example: YouTube channel, Ecommerce Seller, Article Publisher etc.
- 
+
 ## User
 Represents an individual user
 
@@ -40,4 +40,3 @@ Represent a relation between Source-User & User or User & source.
 - User can follow other Source
 
 Example: User subscribes to a Youtube Channel, User follows another User.
-    
