@@ -1,5 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/yodu.svg)](https://badge.fury.io/py/yodu)
-[![Python package](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml/badge.svg)](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml) [![Rate this package](https://badges.openbase.com/python/rating/yodu.svg?token=FoLaOlaq+1sIWz7KlTLUGmx2B6rOn5ecZi7ksv4Z7n0=)](https://openbase.com/python/yodu?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
+[![Python package](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml/badge.svg)](https://github.com/thegeeklabs/yodu.ai/actions/workflows/build.yaml) [![Featured on Openbase](https://badges.openbase.com/python/featured/yodu.svg?token=M13GXouPJCjNsnPIbCDyEZ20OAp4+3r+BpwhHJIWCh8=)](https://openbase.com/python/yodu?utm_source=embedded&utm_medium=badge&utm_campaign=featured-badge&utm_term=python/yodu)
 
 [![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://docs.yodu.ai "Go to project documentation")
 
